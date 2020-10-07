@@ -1,27 +1,15 @@
-## 2020-10-06 plotting 
+## 2020-10-06 plotting version-1/10-7 version 2 
 
 import pandas as pd 
 from matplotlib import pyplot as plt
 import numpy as np
+import itertools
 MC38 = pd.read_excel("MC38_Raw data summary.xlsx",skiprows=3,nrows=35,usecols="A:AF")
 
 ##print(MC38.loc['Days after inoculation'])
 #y=MC38.iloc[0:3,list(i for i in range(10,15) if i > 12)]
 #print(list(i for i in range(10,15) if i > 12))
-
-y=pd.concat([MC38.iloc[:,[0]],MC38.iloc[:,[1]]],axis=1)
-print(y.columns)
-y["Day"]=1
-y.columns=["Group","Tumor_volume","Day"]
-
-
-for i in range(1,len(MC38.columns)-1):
-    x=pd.concat([MC38.iloc[:,[0]],MC38.iloc[:,[i+1]]],axis=1) 
-    x["Day"]=i+1
-    x.columns=["Group","Tumor_volume","Day"]
-    y=pd.concat([x,y],axis=0)
-
-
+MC38.iloc[:,0]=MC38.iloc[:,0].astype('category')
 ##초기 값설정 
 temp=MC38.iloc[0,0]
 j=0
@@ -36,7 +24,7 @@ for i in list(MC38.iloc[:,0]):
 index_of_group.append(len(list(MC38.iloc[:,0])))
 print(index_of_group)
 
-print("input 의 실험 그룹 index 는 {} 이며, 총 실험 그룹 개수는 [{}]개 입니다. ".format(index_of_group,len(index_of_group)+1))
+print(" 총 실험 그룹 개수는 [{}]개 입니다. ".format(len(index_of_group)))
 
 ## 각 그룹별로 statistic information 확인
 temp=0
@@ -46,25 +34,20 @@ for i in sorted(index_of_group):
     mean_df=pd.concat([MC38.iloc[temp:i,].describe().iloc[[1],:],mean_df])
     std_df=pd.concat([MC38.iloc[temp:i,].describe().iloc[[2],:],std_df]) ## 그룹별 mean, std 값 추출완료 
     temp=i
-print(mean_df)
 ## naming group
-print(MC38)
-#mean_df.index=MC38.iloc[index_of_group,0]
-#std_df.index=MC38.iloc[index_of_group,0]
-
+mean_df.index=list(MC38.iloc[:,0].cat.categories)
+std_df.index=list(MC38.iloc[:,0].cat.categories)
 ## ploting 
 
-x=mean_df.iloc[0,:]
-#print(x)
-#x=x.astype('float64')
-#x=pd.Series(x)
-#y=MC38.iloc[0,1:]
-#y=y.astype('float64')
-
-
-
-""" ymask=np.isfinite(y)
-x.index=list(range(1,32))
-plt.plot(x[ymask],y[ymask], linestyle='-', marker='o')
+for i in range(len(mean_df.index)):
+    y=pd.Series(mean_df.iloc[i,:].astype('float64'))
+    x=pd.Series(mean_df.columns).astype("int64")
+    x.index=range(1,len(x)+1)
+    ymask=np.isfinite(y)
+    plt.plot(x[ymask],y[ymask], linestyle='-', marker='o',label='{}'.format(mean_df.index[i-1]))
+    
+plt.title("{} Tumor type ".format(" "))
+plt.ylabel("Tumor volume (mm^3)")
+plt.xlabel("Days after inoculation")
+plt.legend()
 plt.show()
-print(type(x),type(y)) """
