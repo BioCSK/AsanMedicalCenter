@@ -4,8 +4,7 @@ class DataConversion():
     Purpose: Data conversion
     Writer: kcs / katd6@naver.com
     """
-    import pandas as pd
-    import numpy as np
+    
 
     def __init__(self,dataFile,skipRows,nRows,useCols,tumorType):
         """
