@@ -2,12 +2,13 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib as mpl
+import sys
 
 
 class DataConversionAndPlotting():
     """
     Date:2020.10.07
-    Purpose: Data conversion  & plotting 
+    Data conversion & plotting 
     Writer: kcs / katd6@naver.com
     """
     def __init__(self,dataFile,skipRows,nRows,useCols,sheet_name,tumorType):
@@ -32,7 +33,6 @@ class DataConversionAndPlotting():
             x["Day"]=i+1
             x.columns=["Group","Tumor_volume","Day"]
             y=pd.concat([x,y],axis=0)
-        print("변환된 {} Tumor.xlsx 파일이 생성되었습니다.".format(self._tumorType))
         return y.to_excel("{} Tumor.xlsx".format(self._tumorType))
 
     def __call__(self):
@@ -52,7 +52,7 @@ class DataConversionAndPlotting():
                 temp = i
                 index_of_group.append(j-1)
         index_of_group.append(len(list(self.data.iloc[:,0])))
-        print(" 실험 그룹은 {}이며, plotting할 총 실험 그룹 개수는 [{}]개 입니다. ".format(self.data.iloc[:,0],len(index_of_group)))
+        print("실험 그룹은 {}이며, plotting할 총 실험 그룹 개수는 [{}]개 입니다. ".format(self.data.iloc[:,0],len(index_of_group)))
         ## 각 그룹별로 statistic information 확인
         temp=0
         mean_df=pd.DataFrame()
@@ -84,4 +84,9 @@ class DataConversionAndPlotting():
             axes[i].legend()
         plt.show()
         
+
+if __name__ == "__main__":
+    object_t=DataConversionAndPlotting(sys.argv[1],int(sys.argv[2]),int(sys.argv[3]),sys.argv[4],int(sys.argv[5]),sys.argv[6])
+    object_t()
+    object_t.plot()
 
