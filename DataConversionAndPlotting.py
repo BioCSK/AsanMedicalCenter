@@ -6,7 +6,7 @@ import matplotlib as mpl
 
 class DataConversionAndPlotting():
     """
-    Date:2020.10.05 (updated 10.08)
+    Date:2020.10.07
     Purpose: Data conversion  & plotting 
     Writer: kcs / katd6@naver.com
     """
@@ -61,7 +61,6 @@ class DataConversionAndPlotting():
             mean_df=pd.concat([self.data.iloc[temp:i,].describe().iloc[[1],:],mean_df])
             std_df=pd.concat([self.data.iloc[temp:i,].describe().iloc[[2],:],std_df]) ## 그룹별 mean, std 값 추출완료
             temp=i
-        print(index_of_group)
         ## naming group
        
         mean_df.index=list(self.data.iloc[:,0].cat.categories)
@@ -69,16 +68,20 @@ class DataConversionAndPlotting():
         ## ploting 
         cmap=plt.get_cmap('jet')
         colors=[cmap(i) for i in np.linspace(0,1,len(mean_df.index))]
+        fig, axes = plt.subplots(nrows=1,ncols=2)
         for i in range(len(mean_df.index)):
             y=pd.Series(mean_df.iloc[i,:].astype('float64'))
-            x=pd.Series(mean_df.columns).astype("int64")
+            x=pd.Series(mean_df.columns.astype("int64"))
+            sd=pd.Series(std_df.iloc[i,:].astype("float64"))
             x.index=range(1,len(x)+1)
             ymask=np.isfinite(y)
-            plt.plot(x[ymask],y[ymask], linestyle='-', marker='o',label='{}'.format(mean_df.index[i]),color=colors[i])
-        
-        plt.title("{} ".format(self._tumorType))
-        plt.ylabel("Tumor volume (mm^3)")
-        plt.xlabel("Days after inoculation")
-        plt.legend()
+            axes[0].plot(x[ymask],y[ymask], linestyle='-', marker='o',label='{}'.format(mean_df.index[i]),color=colors[i])
+            axes[1].errorbar(x[ymask],y[ymask],sd[ymask], linestyle='-', marker='o',label='{}'.format(mean_df.index[i]),color=colors[i])
+        for i in [0,1]:
+            axes[i].set_title("{} ".format(self._tumorType))
+            axes[i].set_ylabel("Tumor volume (mm^3)")
+            axes[i].set_xlabel("Days after inoculation")
+            axes[i].legend()
         plt.show()
+        
 
