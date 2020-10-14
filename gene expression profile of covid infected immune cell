@@ -1,0 +1,29 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from copy import deepcopy
+import numpy as np
+test=pd.read_csv("GSE155106_Complete_gene_expression.txt",sep="\t")
+data_input=test.iloc[:,[ x for x in range(len(test.columns)) if x % 2 != 0]]
+
+#data_input.pivot(index="Gene Symbol",columns=)
+print(len(data_input.index))
+gene=[]
+sample=[]
+value=[]
+for j in range(len(data_input.index)):
+    for i in data_input.iloc[j,:]:
+        if type(i) == str:
+            gene.extend([i]*4)
+            sample.extend(["DC","Corona_infected DC","Ma","Corona_infected Ma"])
+        else:
+            value.append(i)
+
+
+pivot_input=pd.concat([pd.Series(gene,dtype="string"),pd.Series(sample,dtype="string"),pd.Series(value,dtype="float64")],axis=1)
+pivot_input.columns=["Gene","Cell","Gene_expression"]
+pivot_input=pivot_input.loc[(pivot_input != 0).any(axis=1)] ##유전자 발현이 0인 유전자 제외 
+pivot_input=pivot_input.iloc[0:300,:]
+df=pivot_input.pivot(index="Gene",columns="Cell",values="Gene_expression")
+ax = sns.clustermap(df,vmax=200) ## clustering 동시에 heatmap plotting 
+plt.show() 
