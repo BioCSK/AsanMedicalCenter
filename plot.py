@@ -50,7 +50,7 @@ class DataConversionAndPlotting():
     def plot(self):
         print(self.data)
         ## 2000이 한번넘은건 기록, 그외에는 결측치 처리 
-        for j in range(len(self.data.columns)):
+        for j in range(len(self.data.indedx)):
             size=0
             count=0
             print(j)
