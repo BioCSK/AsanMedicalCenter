@@ -48,12 +48,7 @@ for i in ginfo:
 
 print(len(result),len(df.index))
 df.index=result
-new_df=pd.DataFrame()
-for i in range(0,len(df.index)):
-    if 0 in df.iloc[i,1:]:
-        pass
-    else:
-        new_df=pd.concat([new_df,df.iloc[i,1:]],axis=1)
 
-print(new_df)
+a_series=(df !=0).all(axis=1)
+new_df=df.loc[a_series,:]
 new_df.to_excel("GSE127165.xlsx")
