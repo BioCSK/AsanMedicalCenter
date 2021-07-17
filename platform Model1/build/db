@@ -1,4 +1,0 @@
-
-
-select * from cell_line_category where id=(select id from tumor_type_category where name = 'Colon');
- 
